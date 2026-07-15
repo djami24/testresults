@@ -1,4 +1,4 @@
- 
+
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
@@ -202,7 +202,10 @@
   table.grades{
     width:100%;
     border-collapse: collapse;
-    background: transparent;
+    background: var(--panel-2);
+  }
+  table.grades thead, table.grades tbody, table.grades tr{
+    background: var(--panel-2);
   }
   table.grades th{
     text-align:left;
@@ -213,13 +216,13 @@
     color: var(--ink-dim);
     padding: 6px 8px;
     border-bottom: 1px solid var(--line);
-    background: transparent;
+    background: var(--panel-2);
   }
   table.grades td{
     padding: 10px 8px;
     font-size: 14px;
     border-bottom: 1px solid var(--line);
-    background: transparent;
+    background: var(--panel-2);
     color: var(--ink);
   }
   table.grades tr:last-child td{ border-bottom:none; }
