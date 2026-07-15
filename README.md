@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark light">
-<title>Natijalar daftari</title>
+<title>EDU SCHOOL — Natijalar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -12,6 +12,7 @@
     color-scheme: dark;
     --bg: #121826;
     --bg-2: #0d121c;
+    --bg-grad-1: #182236;
     --panel: #1c2536;
     --panel-2: #212d40;
     --line: #2e3b52;
@@ -23,15 +24,83 @@
     --fail: #c15a44;
     --shadow: 0 24px 50px -25px rgba(0,0,0,0.65);
   }
+  body.light-mode{
+    color-scheme: light;
+    --bg: #f2eee2;
+    --bg-2: #e8e2cf;
+    --bg-grad-1: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #f7f3e6;
+    --line: #ddd5bd;
+    --ink: #201c12;
+    --ink-dim: #6c6350;
+    --brass: #a97e2b;
+    --brass-dim: #8a7325;
+    --pass: #2f7a5a;
+    --fail: #b8503b;
+    --shadow: 0 24px 50px -25px rgba(0,0,0,0.15);
+  }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background: radial-gradient(ellipse at top, #182236 0%, var(--bg) 55%, var(--bg-2) 100%);
+    background: radial-gradient(ellipse at top, var(--bg-grad-1) 0%, var(--bg) 55%, var(--bg-2) 100%);
     color: var(--ink);
     font-family: 'Inter', sans-serif;
     min-height:100vh;
+    transition: background 0.3s ease, color 0.3s ease;
   }
-  .wrap{ max-width: 880px; margin: 0 auto; padding: 36px 20px 70px; }
+  .wrap{ max-width: 880px; margin: 0 auto; padding: 36px 20px 70px; position: relative; }
+
+  /* ---- topbar: theme toggle + admin corner button ---- */
+  .topbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 22px;
+  }
+  .theme-toggle{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 16px 7px 7px;
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .theme-toggle .icon{
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 13px;
+    transition: transform 0.3s ease;
+  }
+  .theme-toggle:hover .icon{ transform: rotate(20deg); }
+
+  .corner-admin-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight:600;
+    letter-spacing: 0.04em;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor:pointer;
+    transition: all 0.2s ease;
+  }
+  .corner-admin-btn:hover{ border-color: var(--brass-dim); color: var(--ink); }
+  .corner-admin-btn.in-admin{
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #241c05;
+  }
 
   .brand{
     text-align:center;
@@ -54,38 +123,10 @@
   }
 
   /* ---- ledger index tabs ---- */
-  .tabs{
-    display:flex;
-    justify-content:center;
-    gap: 2px;
-    margin: 30px 0 0;
-    position: relative;
-    z-index: 2;
-  }
-  .tabs button{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight:600;
-    letter-spacing: 0.04em;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-bottom: none;
-    color: var(--ink-dim);
-    padding: 12px 26px 14px;
-    cursor:pointer;
-    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-    transition: color 0.2s ease, background 0.2s ease;
-  }
-  .tabs button.active{
-    background: var(--brass);
-    color: #241c05;
-  }
-  .tabs button:not(.active):hover{ color: var(--ink); }
-
   .stage{
     background: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 4px 14px 14px 14px;
+    border-radius: 16px;
     box-shadow: var(--shadow);
     padding: 30px;
     position: relative;
@@ -346,18 +387,21 @@
 </head>
 <body>
 <div class="wrap">
+  <div class="topbar">
+    <button class="theme-toggle" id="themeToggle" type="button">
+      <span class="icon" id="themeIcon">🌙</span>
+      <span id="themeLabel">Tungi rejim</span>
+    </button>
+    <button class="corner-admin-btn" id="cornerAdminBtn" type="button">Admin</button>
+  </div>
+
   <div class="brand">
-    <div class="eyebrow">Natijalar daftari</div>
-    <h1>Talabalar test natijalari</h1>
+    <div class="eyebrow">EDU SCHOOL</div>
+    <h1>EDU O'QUVCHILAR TEST NATIJALARI</h1>
   </div>
 
   <div id="setupNotice" style="display:none; background:#3a2a12; border:1px solid var(--brass-dim); color:#f0d896; border-radius:10px; padding:14px 18px; font-size:13px; margin-bottom:20px; text-align:center;">
     ⚠ Firebase hali sozlanmagan. Fayl ichidagi <code>firebaseConfig</code> qismini to'ldiring, aks holda natijalar saqlanmaydi.
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="student">Natijalar</button>
-    <button class="tab-btn" data-tab="admin">Admin</button>
   </div>
 
   <!-- STUDENT VIEW -->
@@ -395,10 +439,10 @@
       </div>
 
       <div class="admin-section">
-        <h2 class="section-title">Modullar</h2>
-        <p class="section-sub">Har bir ustun bitta unit/modul natijasini bildiradi.</p>
+        <h2 class="section-title">Unitlar</h2>
+        <p class="section-sub">Har bir ustun bitta unit natijasini bildiradi.</p>
         <div class="inline-form">
-          <input type="text" id="unitInput" placeholder="Masalan: 1-modul">
+          <input type="text" id="unitInput" placeholder="Masalan: 1-unit">
           <button class="primary" id="addUnitBtn">Qo'shish</button>
         </div>
         <div class="chip-list" id="unitChips"></div>
@@ -428,9 +472,9 @@
   </div>
 
   <footer>
-    Ma'lumotlar Firebase'da saqlanadi — sayt havolasiga ega bo'lgan har kim natijalarni ko'ra oladi.<br>
-    Natijalarni faqat admin sifatida ro'yxatdan o'tgan foydalanuvchi kirita oladi.
+    EDU O'QUV MARKAZI TALABALARNING TEST NATIJALARI
   </footer>
+  <div style="text-align:center; margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; color: var(--ink-dim);">DJAMI 2026</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -467,11 +511,25 @@ let data = { units: [], students: [] };
 let isAdminLoggedIn = false;
 let dataLoaded = false;
 
-const tabBtns = document.querySelectorAll('.tab-btn');
+const cornerAdminBtn = document.getElementById('cornerAdminBtn');
 const studentStage = document.getElementById('studentStage');
 const adminStage = document.getElementById('adminStage');
 const adminLockView = document.getElementById('adminLockView');
 const adminPanelView = document.getElementById('adminPanelView');
+
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const themeLabel = document.getElementById('themeLabel');
+
+function applyTheme(isLight){
+  document.body.classList.toggle('light-mode', isLight);
+  themeIcon.textContent = isLight ? '☀️' : '🌙';
+  themeLabel.textContent = isLight ? 'Kunduzgi rejim' : 'Tungi rejim';
+}
+applyTheme(false);
+themeToggle.addEventListener('click', () => {
+  applyTheme(!document.body.classList.contains('light-mode'));
+});
 
 async function loadData(){
   if(firebaseNotConfigured){ dataLoaded = true; return; }
@@ -501,15 +559,17 @@ async function saveData(){
   }
 }
 
-/* ---------------- tabs ---------------- */
-tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+/* ---------------- navigation: student view <-> admin view ---------------- */
+cornerAdminBtn.addEventListener('click', () => {
+  const goingToAdmin = studentStage.style.display !== 'none';
+  switchTab(goingToAdmin ? 'admin' : 'student');
 });
 
 function switchTab(tab){
-  tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   studentStage.style.display = tab === 'student' ? 'block' : 'none';
   adminStage.style.display = tab === 'admin' ? 'block' : 'none';
+  cornerAdminBtn.textContent = tab === 'admin' ? '← Natijalar' : 'Admin';
+  cornerAdminBtn.classList.toggle('in-admin', tab === 'admin');
   if(tab === 'admin'){
     initAdminLock();
   }
@@ -554,13 +614,13 @@ function renderResultCard(student){
   card.appendChild(head);
 
   if(data.units.length === 0){
-    card.innerHTML += '<div class="empty">Hali modullar qo\'shilmagan.</div>';
+    card.innerHTML += '<div class="empty">Hali unitlar qo\'shilmagan.</div>';
     return card;
   }
 
   const table = document.createElement('table');
   table.className = 'grades';
-  table.innerHTML = `<thead><tr><th>Modul</th><th>Ball</th><th>Holat</th></tr></thead>`;
+  table.innerHTML = `<thead><tr><th>Unit</th><th>Ball</th><th>Holat</th></tr></thead>`;
   const tbody = document.createElement('tbody');
 
   let sum = 0, count = 0;
@@ -700,7 +760,7 @@ function renderUnitChips(){
     del.textContent = '✕';
     del.title = "O'chirish";
     del.addEventListener('click', async () => {
-      if(!confirm(`"${unit}" modulini o'chirasizmi? Unga tegishli barcha ballar ham o'chadi.`)) return;
+      if(!confirm(`"${unit}" unitini o'chirasizmi? Unga tegishli barcha ballar ham o'chadi.`)) return;
       data.units = data.units.filter(u => u !== unit);
       data.students.forEach(s => { if(s.scores) delete s.scores[unit]; });
       renderUnitChips();
@@ -711,7 +771,7 @@ function renderUnitChips(){
     unitChips.appendChild(chip);
   });
   if(data.units.length === 0){
-    unitChips.innerHTML = '<span class="hint">Hali modul qo\'shilmagan.</span>';
+    unitChips.innerHTML = '<span class="hint">Hali unit qo\'shilmagan.</span>';
   }
 }
 
