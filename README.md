@@ -328,6 +328,23 @@
   }
   .inline-form input{ width: auto; flex: 1; min-width: 140px; }
 
+  .bulk-textarea{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 12px 14px;
+    outline: none;
+    width: 100%;
+    resize: vertical;
+    line-height: 1.6;
+    transition: border-color 0.2s ease;
+  }
+  .bulk-textarea:focus{ border-color: var(--brass-dim); }
+  .bulk-textarea::placeholder{ color: #5c6a80; }
+
   .chip-list{
     display:flex; flex-wrap:wrap; gap: 8px; margin-top: 14px;
   }
@@ -450,11 +467,13 @@
 
       <div class="admin-section">
         <h2 class="section-title">Talaba qo'shish</h2>
-        <div class="inline-form">
-          <input type="text" id="studentNameInput" placeholder="Ism familiya">
-          <input type="text" id="studentGroupInput" placeholder="Guruh nomi">
-          <button class="primary" id="addStudentBtn">Qo'shish</button>
+        <p class="section-sub">Har bir talabani alohida qatorga yozing (ism familiya), pastda guruhni bir marta kiriting — hammasi o'sha guruhga qo'shiladi.</p>
+        <textarea id="bulkNamesInput" class="bulk-textarea" rows="6" placeholder="Malika Karimova&#10;Aziz Yusupov&#10;Sardor Rahimov&#10;..."></textarea>
+        <div class="inline-form" style="margin-top:12px;">
+          <input type="text" id="bulkGroupInput" placeholder="Guruh nomi (barchasiga)">
+          <button class="primary" id="bulkAddBtn">Hammasini qo'shish</button>
         </div>
+        <div class="hint" id="bulkHint"></div>
       </div>
 
       <div class="admin-section">
@@ -775,20 +794,47 @@ function renderUnitChips(){
   }
 }
 
-/* ---------------- admin: students ---------------- */
-const studentNameInput = document.getElementById('studentNameInput');
-const studentGroupInput = document.getElementById('studentGroupInput');
-const addStudentBtn = document.getElementById('addStudentBtn');
+/* ---------------- admin: students (bulk add) ---------------- */
+const bulkNamesInput = document.getElementById('bulkNamesInput');
+const bulkGroupInput = document.getElementById('bulkGroupInput');
+const bulkAddBtn = document.getElementById('bulkAddBtn');
+const bulkHint = document.getElementById('bulkHint');
 
-addStudentBtn.addEventListener('click', async () => {
-  const name = studentNameInput.value.trim();
-  const group = studentGroupInput.value.trim();
-  if(!name || !group) return;
-  data.students.push({ id: 's' + Date.now() + Math.floor(Math.random()*1000), name, group, scores: {} });
-  studentNameInput.value = '';
-  studentGroupInput.value = '';
+bulkAddBtn.addEventListener('click', async () => {
+  const group = bulkGroupInput.value.trim();
+  const names = bulkNamesInput.value
+    .split('\n')
+    .map(n => n.trim())
+    .filter(n => n.length > 0);
+
+  if(!group){
+    bulkHint.textContent = "Iltimos, guruh nomini kiriting.";
+    return;
+  }
+  if(names.length === 0){
+    bulkHint.textContent = "Kamida bitta ism-familiya kiriting.";
+    return;
+  }
+
+  bulkAddBtn.disabled = true;
+  bulkHint.textContent = 'Qo\'shilmoqda…';
+
+  names.forEach((name, i) => {
+    data.students.push({
+      id: 's' + Date.now() + '_' + i + Math.floor(Math.random()*1000),
+      name, group, scores: {}
+    });
+  });
+
+  bulkNamesInput.value = '';
+  bulkGroupInput.value = '';
   renderAdminGradeTable();
-  await saveData();
+  const ok = await saveData();
+  bulkHint.textContent = ok
+    ? `${names.length} ta talaba "${group}" guruhiga qo'shildi.`
+    : "Saqlashda xatolik yuz berdi, qayta urinib ko'ring.";
+  bulkAddBtn.disabled = false;
+  setTimeout(() => { bulkHint.textContent = ''; }, 4000);
 });
 
 /* ---------------- admin: grade table ---------------- */
