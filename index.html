@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<title>EDU SCHOOL — Natijalar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Sans+Caption:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: dark;
+    --bg: #121826;
+    --bg-2: #0d121c;
+    --bg-grad-1: #182236;
+    --panel: #1c2536;
+    --panel-2: #212d40;
+    --line: #2e3b52;
+    --ink: #eef1f0;
+    --ink-dim: #93a0b5;
+    --brass: #c9a227;
+    --brass-dim: #8a7325;
+    --pass: #5fae95;
+    --fail: #c15a44;
+    --shadow: 0 24px 50px -25px rgba(0,0,0,0.65);
+  }
+  body.light-mode{
+    color-scheme: light;
+    --bg: #f2eee2;
+    --bg-2: #e8e2cf;
+    --bg-grad-1: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #f7f3e6;
+    --line: #ddd5bd;
+    --ink: #201c12;
+    --ink-dim: #6c6350;
+    --brass: #a97e2b;
+    --brass-dim: #8a7325;
+    --pass: #2f7a5a;
+    --fail: #b8503b;
+    --shadow: 0 24px 50px -25px rgba(0,0,0,0.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: radial-gradient(ellipse at top, var(--bg-grad-1) 0%, var(--bg) 55%, var(--bg-2) 100%);
+    color: var(--ink);
+    font-family: 'PT Serif', Georgia, serif;
+    min-height:100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .wrap{ max-width: 880px; margin: 0 auto; padding: 36px 20px 70px; position: relative; }
+
+  /* ---- topbar: theme toggle + admin corner button ---- */
+  .topbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 22px;
+  }
+  .theme-toggle{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 16px 7px 7px;
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .theme-toggle .icon{
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 13px;
+    transition: transform 0.3s ease;
+  }
+  .theme-toggle:hover .icon{ transform: rotate(20deg); }
+
+  .corner-admin-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight:600;
+    letter-spacing: 0.04em;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor:pointer;
+    transition: all 0.2s ease;
+  }
+  .corner-admin-btn:hover{ border-color: var(--brass-dim); color: var(--ink); }
+  .corner-admin-btn.in-admin{
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #241c05;
+  }
+
+  .brand{
+    text-align:center;
+    margin-bottom: 26px;
+  }
+  .brand .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--brass);
+    margin-bottom: 8px;
+  }
+  .brand h1{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight: 600;
+    font-size: clamp(26px, 5vw, 38px);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---- ledger index tabs ---- */
+  .stage{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h2.section-title{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+  p.section-sub{
+    color: var(--ink-dim);
+    font-size: 13px;
+    margin: 0 0 22px;
+  }
+
+  /* ---- search ---- */
+  .search-row{
+    display:flex;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  input[type="text"], input[type="password"], input[type="number"]{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-family: 'PT Serif', Georgia, serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s ease;
+  }
+  input:focus{ border-color: var(--brass-dim); }
+  input::placeholder{ color: #5c6a80; }
+
+  button.primary{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size: 13px;
+    background: var(--brass);
+    color: #241c05;
+    border: none;
+    border-radius: 8px;
+    padding: 0 22px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition: filter 0.15s ease;
+  }
+  button.primary:hover{ filter: brightness(1.08); }
+  button.primary:disabled{ opacity: 0.5; cursor:not-allowed; }
+
+  button.ghost{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 16px;
+    cursor:pointer;
+  }
+  button.ghost:hover{ color: var(--ink); border-color: var(--brass-dim); }
+
+  button.danger{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: transparent;
+    color: var(--fail);
+    border: 1px solid #4a2a24;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor:pointer;
+  }
+  button.danger:hover{ background: rgba(193,90,68,0.12); }
+
+  .hint{
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-top: 10px;
+  }
+
+  /* ---- result cards ---- */
+  .result-card{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-top: 22px;
+  }
+  .result-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .result-head .name{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:600;
+    font-size: 20px;
+  }
+  .result-head .group{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--brass);
+  }
+  table.grades{
+    width:100%;
+    border-collapse: collapse;
+    background: var(--panel-2);
+  }
+  table.grades thead, table.grades tbody, table.grades tr{
+    background: var(--panel-2);
+  }
+  table.grades th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+  }
+  table.grades td{
+    padding: 10px 8px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--ink);
+  }
+  table.grades tr:last-child td{ border-bottom:none; }
+  td.score-cell{ font-family:'IBM Plex Mono', monospace; font-weight:600; }
+
+  .stamp{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight:700;
+    letter-spacing: 0.06em;
+    display:inline-block;
+    border: 2px solid var(--pass);
+    color: var(--pass);
+    border-radius: 5px;
+    padding: 2px 8px;
+    transform: rotate(-4deg);
+  }
+  .stamp.fail{ border-color: var(--fail); color: var(--fail); }
+
+  .avg-row{
+    display:flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+  .avg-row b{ color: var(--ink); font-size: 16px; }
+
+  .empty{
+    text-align:center;
+    padding: 30px 10px;
+    color: var(--ink-dim);
+    font-size: 14px;
+  }
+
+  /* ---- admin ---- */
+  .lock-wrap{
+    max-width: 340px;
+    margin: 10px auto 0;
+    text-align:center;
+  }
+  .lock-wrap .search-row{ margin-top: 16px; }
+  .admin-topbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 22px;
+  }
+  .admin-section{
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px dashed var(--line);
+  }
+  .admin-section:first-of-type{ margin-top: 0; padding-top: 0; border-top:none; }
+  .inline-form{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .inline-form input{ width: auto; flex: 1; min-width: 140px; }
+
+  .bulk-textarea{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-family: 'PT Serif', Georgia, serif;
+    font-size: 14px;
+    padding: 12px 14px;
+    outline: none;
+    width: 100%;
+    resize: vertical;
+    line-height: 1.6;
+    transition: border-color 0.2s ease;
+  }
+  .bulk-textarea:focus{ border-color: var(--brass-dim); }
+  .bulk-textarea::placeholder{ color: #5c6a80; }
+
+  .stats-row{
+    display:flex; gap: 12px; flex-wrap:wrap; align-items:stretch;
+  }
+  .stats-box{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display:flex; flex-direction:column; gap: 4px;
+    min-width: 140px;
+  }
+  .stats-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-dim);
+  }
+  .stats-value{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 24px;
+    color: var(--brass);
+  }
+  .stats-value-sm{ font-size: 13px; font-family:'IBM Plex Mono', monospace; color: var(--ink); }
+
+  .mode-switch{
+    display:flex; gap: 10px; margin-bottom: 4px; flex-wrap:wrap;
+  }
+  .mode-option{
+    display:flex; align-items:center; gap: 7px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 16px 8px 12px;
+    cursor:pointer;
+    font-size: 13px;
+    color: var(--ink-dim);
+    transition: all 0.2s ease;
+  }
+  .mode-option input{ accent-color: var(--brass); cursor:pointer; }
+  .mode-option:has(input:checked){
+    border-color: var(--brass);
+    color: var(--ink);
+    background: rgba(201,162,39,0.1);
+  }
+
+  .chip-list{
+    display:flex; flex-wrap:wrap; gap: 8px; margin-top: 14px;
+  }
+  .chip{
+    display:flex; align-items:center; gap: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 8px 6px 14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+  }
+  .chip button{ background:none; border:none; color: var(--fail); cursor:pointer; font-size:13px; padding: 2px 4px; }
+
+  .leaderboard-list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .leaderboard-row{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .leaderboard-rank{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size: 14px;
+    color: var(--ink-dim);
+    width: 26px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .leaderboard-row.top1 .leaderboard-rank{ color: #d4af37; font-size:18px; }
+  .leaderboard-row.top2 .leaderboard-rank{ color: #b7b7b7; font-size:17px; }
+  .leaderboard-row.top3 .leaderboard-rank{ color: #c98a4b; font-size:17px; }
+  .leaderboard-info{ flex:1; min-width:0; }
+  .leaderboard-name{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .leaderboard-group{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--brass);
+    margin-top: 2px;
+  }
+  .leaderboard-score{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size: 16px;
+    color: var(--pass);
+    flex-shrink:0;
+  }
+
+  .group-folders{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .group-folder{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+    cursor:pointer;
+    text-align:left;
+    transition: all 0.15s ease;
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+  .group-folder:hover{ border-color: var(--brass); transform: translateY(-2px); }
+  .group-folder .folder-icon{ font-size: 20px; }
+  .group-folder .folder-name{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 15px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+  .group-folder .folder-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+  }
+  .group-table-header{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+  .group-table-title{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 16px;
+    color: var(--brass);
+  }
+
+  .grade-table-wrap{ overflow-x:auto; margin-top: 14px; }
+  table.admin-grades{ border-collapse: collapse; width: 100%; min-width: 480px; }
+  table.admin-grades th, table.admin-grades td{
+    border: 1px solid var(--line);
+    padding: 8px;
+    font-size: 13px;
+    text-align:center;
+    background: var(--panel);
+    color: var(--ink);
+  }
+  table.admin-grades th{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--brass);
+    background: var(--panel-2);
+  }
+  table.admin-grades td.name-cell{ text-align:left; font-weight:600; white-space:nowrap; }
+  table.admin-grades td.group-cell{ text-align:left; color: var(--ink-dim); font-family:'IBM Plex Mono', monospace; font-size:12px; white-space:nowrap; }
+  table.admin-grades input[type="number"]{
+    padding: 6px; text-align:center; width: 64px;
+  }
+
+  .save-bar{
+    display:flex; align-items:center; gap: 12px;
+    margin-top: 18px;
+  }
+  .save-status{ font-size: 12px; color: var(--ink-dim); font-family:'IBM Plex Mono', monospace; }
+
+  footer{
+    text-align:center;
+    margin-top: 26px;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    line-height:1.6;
+  }
+
+  @media (max-width: 520px){
+    .stage{ padding: 22px 18px; }
+    .search-row{ flex-direction:column; }
+    button.primary{ padding: 12px 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <button class="theme-toggle" id="themeToggle" type="button">
+      <span class="icon" id="themeIcon">🌙</span>
+      <span id="themeLabel">Tungi rejim</span>
+    </button>
+    <button class="corner-admin-btn" id="cornerAdminBtn" type="button">Admin</button>
+  </div>
+
+  <div class="brand">
+    <div class="eyebrow">EDU SCHOOL</div>
+    <h1>EDU O'QUVCHILAR TEST NATIJALARI</h1>
+  </div>
+
+  <div id="setupNotice" style="display:none; background:#3a2a12; border:1px solid var(--brass-dim); color:#f0d896; border-radius:10px; padding:14px 18px; font-size:13px; margin-bottom:20px; text-align:center;">
+    ⚠ Firebase hali sozlanmagan. Fayl ichidagi <code>firebaseConfig</code> qismini to'ldiring, aks holda natijalar saqlanmaydi.
+  </div>
+
+  <!-- STUDENT VIEW -->
+  <div class="stage" id="studentStage">
+    <h2 class="section-title">Natijangizni toping</h2>
+    <p class="section-sub">Ismingiz yoki guruh nomingizni kiriting.</p>
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="Masalan: Aziza Karimova yoki 21-IF-14">
+      <button class="primary" id="searchBtn">Qidirish</button>
+    </div>
+    <div class="hint" id="studentHint"></div>
+    <div id="resultsArea"></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="stage" id="leaderboardStage" style="display:none; margin-top:22px;">
+    <h2 class="section-title">🏆 TOP-10</h2>
+    <p class="section-sub" id="leaderboardSub"></p>
+    <div id="leaderboardArea"></div>
+  </div>
+
+  <!-- ADMIN VIEW -->
+  <div class="stage" id="adminStage" style="display:none;">
+
+    <div id="adminLockView">
+      <div class="lock-wrap">
+        <h2 class="section-title" id="lockTitle">Admin panel</h2>
+        <p class="section-sub" id="lockSub">Kirish uchun email va parolni kiriting.</p>
+        <div class="search-row" style="flex-direction:column;">
+          <input type="text" id="adminEmailInput" placeholder="Email" autocomplete="username">
+          <input type="password" id="adminPwInput" placeholder="Parol" autocomplete="current-password">
+          <button class="primary" id="adminPwBtn" style="width:100%;">Kirish</button>
+        </div>
+        <div class="hint" id="lockHint"></div>
+      </div>
+    </div>
+
+    <div id="adminPanelView" style="display:none;">
+      <div class="admin-topbar">
+        <h2 class="section-title" style="margin:0;">Admin panel</h2>
+        <button class="ghost" id="logoutBtn">Chiqish</button>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Sayt statistikasi</h2>
+        <p class="section-sub">Saytga jami nechta kishi kirganini ko'rsatadi.</p>
+        <div class="stats-row">
+          <div class="stats-box">
+            <span class="stats-label">Jami tashriflar</span>
+            <span class="stats-value" id="visitCountValue">—</span>
+          </div>
+          <div class="stats-box">
+            <span class="stats-label">Oxirgi tashrif</span>
+            <span class="stats-value stats-value-sm" id="lastVisitValue">—</span>
+          </div>
+          <button class="ghost" id="refreshVisitsBtn" style="align-self:center;">Yangilash</button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Unitlar</h2>
+        <p class="section-sub">Har bir ustun bitta unit natijasini bildiradi.</p>
+        <div class="inline-form">
+          <input type="text" id="unitInput" placeholder="Masalan: 1-unit">
+          <button class="primary" id="addUnitBtn">Qo'shish</button>
+        </div>
+        <div class="chip-list" id="unitChips"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Talaba qo'shish</h2>
+        <p class="section-sub">Guruhni qanday qo'shishni tanlang: ro'yxatdagi hammasiga bitta guruh, yoki faqat bitta ismga.</p>
+        <div class="mode-switch" id="addModeSwitch">
+          <label class="mode-option">
+            <input type="radio" name="addMode" id="addModeAll" value="all" checked>
+            <span>Hammasiga qo'shish</span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="addMode" id="addModeOne" value="one">
+            <span>Bitta ismga qo'shish</span>
+          </label>
+        </div>
+
+        <div id="addModeAllPanel">
+          <p class="section-sub" style="margin-top:10px;">Har bir talabani alohida qatorga yozing (ism familiya), pastda guruhni bir marta kiriting — hammasi o'sha guruhga qo'shiladi.</p>
+          <textarea id="bulkNamesInput" class="bulk-textarea" rows="6" placeholder="Malika Karimova&#10;Aziz Yusupov&#10;Sardor Rahimov&#10;..."></textarea>
+          <div class="inline-form" style="margin-top:12px;">
+            <input type="text" id="bulkGroupInput" placeholder="Guruh nomi (barchasiga)">
+            <button class="primary" id="bulkAddBtn">Hammasini qo'shish</button>
+          </div>
+        </div>
+
+        <div id="addModeOnePanel" style="display:none;">
+          <p class="section-sub" style="margin-top:10px;">Faqat bitta talabaning ism-familiyasi va guruhini kiriting.</p>
+          <div class="inline-form">
+            <input type="text" id="oneNameInput" placeholder="Ism familiya">
+            <input type="text" id="oneGroupInput" placeholder="Guruh nomi">
+            <button class="primary" id="oneAddBtn">Qo'shish</button>
+          </div>
+        </div>
+
+        <div class="hint" id="bulkHint"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Natijalarni kiritish</h2>
+        <p class="section-sub" id="gradeSectionSub">Guruhni tanlang, so'ng har bir katakka ballni yozing (0–100).</p>
+
+        <div class="group-folders" id="groupFoldersList"></div>
+
+        <div class="grade-table-wrap" id="groupTableWrap" style="display:none;">
+          <div class="group-table-header">
+            <button class="ghost" id="backToGroupsBtn">← Guruhlar</button>
+            <span class="group-table-title" id="groupTableTitle"></span>
+          </div>
+          <table class="admin-grades" id="adminGradesTable"></table>
+        </div>
+
+        <div class="save-bar">
+          <button class="primary" id="saveBtn">Saqlash</button>
+          <span class="save-status" id="saveStatus"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    EDU Test Natijalari<br>
+    Natijalar doimiy ravishda yangilanib boriladi.<br>
+    Admin bilan bog'lanish: <a href="https://t.me/djamiteacher" target="_blank" rel="noopener" style="color:var(--brass); text-decoration:none;">t.me/djamiteacher</a>
+  </footer>
+  <div style="text-align:center; margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; color: var(--ink-dim);">DJAMI 2026</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+/* =====================================================================
+   FIREBASE SOZLAMALARI — bu yerni o'zingizning Firebase konfiguratsiyangiz
+   bilan almashtiring. Firebase Console → Project settings → General →
+   "Your apps" → Web app (</>) dan olinadi.
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCOaqLaZ3GFhednIjIjO-TylWbULmyW8DA",
+  authDomain: "test-results-e7431.firebaseapp.com",
+  projectId: "test-results-e7431",
+  storageBucket: "test-results-e7431.firebasestorage.app",
+  messagingSenderId: "507789683076",
+  appId: "1:507789683076:web:69796322dacac312ff55d1"
+};
+
+const firebaseNotConfigured = firebaseConfig.apiKey === "YOUR_API_KEY";
+let db = null;
+let auth = null;
+if(!firebaseNotConfigured){
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  auth = firebase.auth();
+}
+
+const GRADEBOOK_DOC = 'gradebook';
+const PASS_THRESHOLD = 60;
+
+let data = { units: [], students: [] };
+let isAdminLoggedIn = false;
+let dataLoaded = false;
+
+const cornerAdminBtn = document.getElementById('cornerAdminBtn');
+const studentStage = document.getElementById('studentStage');
+const adminStage = document.getElementById('adminStage');
+const adminLockView = document.getElementById('adminLockView');
+const adminPanelView = document.getElementById('adminPanelView');
+
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const themeLabel = document.getElementById('themeLabel');
+
+function applyTheme(isLight){
+  document.body.classList.toggle('light-mode', isLight);
+  themeIcon.textContent = isLight ? '☀️' : '🌙';
+  themeLabel.textContent = isLight ? 'Kunduzgi rejim' : 'Tungi rejim';
+}
+applyTheme(true);
+themeToggle.addEventListener('click', () => {
+  applyTheme(!document.body.classList.contains('light-mode'));
+});
+
+async function loadData(){
+  if(firebaseNotConfigured){ dataLoaded = true; return; }
+  try{
+    const snap = await db.collection('gradebook').doc(GRADEBOOK_DOC).get();
+    if(snap.exists){
+      const d = snap.data();
+      data.units = Array.isArray(d.units) ? d.units : [];
+      data.students = Array.isArray(d.students) ? d.students : [];
+    }
+  }catch(e){
+    data = { units: [], students: [] };
+  }
+  dataLoaded = true;
+}
+
+/* ---------------- top-10 leaderboard (so'nggi unit, faqat 100 ball) ---------------- */
+const leaderboardStage = document.getElementById('leaderboardStage');
+const leaderboardSub = document.getElementById('leaderboardSub');
+const leaderboardArea = document.getElementById('leaderboardArea');
+
+function renderLeaderboard(){
+  if(!data.units || data.units.length === 0 || !data.students || data.students.length === 0){
+    leaderboardStage.style.display = 'none';
+    return;
+  }
+
+  const lastUnit = data.units[data.units.length - 1];
+  const perfect = data.students.filter(s =>
+    s.scores && Number(s.scores[lastUnit]) === 100
+  );
+
+  if(perfect.length === 0){
+    leaderboardStage.style.display = 'none';
+    return;
+  }
+
+  const top10 = perfect.slice(0, 10);
+
+  leaderboardStage.style.display = 'block';
+  leaderboardSub.textContent = `"${lastUnit}" unitidan 100 ball olgan talabalar`;
+
+  leaderboardArea.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'leaderboard-list';
+
+  top10.forEach((s, i) => {
+    const rank = i + 1;
+    const row = document.createElement('div');
+    row.className = 'leaderboard-row' + (rank <= 3 ? ' top' + rank : '');
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+    row.innerHTML = `
+      <span class="leaderboard-rank">${medal}</span>
+      <span class="leaderboard-info">
+        <div class="leaderboard-name">${escapeHtml(s.name)}</div>
+        <div class="leaderboard-group">${escapeHtml(s.group)}</div>
+      </span>
+      <span class="leaderboard-score">100</span>
+    `;
+    list.appendChild(row);
+  });
+
+  leaderboardArea.appendChild(list);
+}
+
+async function saveData(){
+  if(firebaseNotConfigured) return false;
+  try{
+    await db.collection('gradebook').doc(GRADEBOOK_DOC).set({
+      units: data.units,
+      students: data.students
+    });
+    renderLeaderboard();
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+/* ---------------- visitor tracking ---------------- */
+async function trackVisit(){
+  if(firebaseNotConfigured) return;
+  try{
+    if(sessionStorage.getItem('eduSchoolVisitTracked')) return;
+    sessionStorage.setItem('eduSchoolVisitTracked', '1');
+    await db.collection('stats').doc('visits').set({
+      count: firebase.firestore.FieldValue.increment(1),
+      lastVisit: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }catch(e){ /* jimgina o'tkazib yuboramiz */ }
+}
+
+const visitCountValue = document.getElementById('visitCountValue');
+const lastVisitValue = document.getElementById('lastVisitValue');
+const refreshVisitsBtn = document.getElementById('refreshVisitsBtn');
+
+async function loadVisitStats(){
+  if(firebaseNotConfigured) return;
+  visitCountValue.textContent = '…';
+  lastVisitValue.textContent = '…';
+  try{
+    const snap = await db.collection('stats').doc('visits').get();
+    if(snap.exists){
+      const d = snap.data();
+      visitCountValue.textContent = (d.count !== undefined) ? d.count : '0';
+      if(d.lastVisit && d.lastVisit.toDate){
+        lastVisitValue.textContent = d.lastVisit.toDate().toLocaleString('uz-UZ');
+      } else {
+        lastVisitValue.textContent = '—';
+      }
+    } else {
+      visitCountValue.textContent = '0';
+      lastVisitValue.textContent = '—';
+    }
+  }catch(e){
+    visitCountValue.textContent = 'Xato';
+    lastVisitValue.textContent = '—';
+  }
+}
+refreshVisitsBtn.addEventListener('click', loadVisitStats);
+
+/* ---------------- navigation: student view <-> admin view ---------------- */
+cornerAdminBtn.addEventListener('click', () => {
+  const goingToAdmin = studentStage.style.display !== 'none';
+  switchTab(goingToAdmin ? 'admin' : 'student');
+});
+
+function switchTab(tab){
+  studentStage.style.display = tab === 'student' ? 'block' : 'none';
+  adminStage.style.display = tab === 'admin' ? 'block' : 'none';
+  cornerAdminBtn.textContent = tab === 'admin' ? '← Natijalar' : 'Admin';
+  cornerAdminBtn.classList.toggle('in-admin', tab === 'admin');
+  if(tab === 'admin'){
+    initAdminLock();
+  }
+}
+
+/* ---------------- student view ---------------- */
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const resultsArea = document.getElementById('resultsArea');
+const studentHint = document.getElementById('studentHint');
+
+async function runSearch(){
+  const q = searchInput.value.trim().toLowerCase();
+  resultsArea.innerHTML = '';
+  if(!q){
+    studentHint.textContent = "Iltimos, ism yoki guruh nomini kiriting.";
+    return;
+  }
+  studentHint.textContent = 'Qidirilmoqda…';
+  if(!dataLoaded) await loadData();
+  studentHint.textContent = '';
+
+  const matches = data.students.filter(s =>
+    s.name.toLowerCase().includes(q) || s.group.toLowerCase().includes(q)
+  );
+
+  if(matches.length === 0){
+    resultsArea.innerHTML = '<div class="empty">Hech narsa topilmadi. Ism yoki guruh nomini tekshirib ko\'ring.</div>';
+    return;
+  }
+
+  matches.forEach(s => resultsArea.appendChild(renderResultCard(s)));
+}
+
+function renderResultCard(student){
+  const card = document.createElement('div');
+  card.className = 'result-card';
+
+  const head = document.createElement('div');
+  head.className = 'result-head';
+  head.innerHTML = `<span class="name">${escapeHtml(student.name)}</span><span class="group">${escapeHtml(student.group)}</span>`;
+  card.appendChild(head);
+
+  if(data.units.length === 0){
+    card.innerHTML += '<div class="empty">Hali unitlar qo\'shilmagan.</div>';
+    return card;
+  }
+
+  const table = document.createElement('table');
+  table.className = 'grades';
+  table.innerHTML = `<thead><tr><th>Unit</th><th>Ball</th><th>Holat</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+
+  let sum = 0, count = 0;
+  data.units.forEach(unit => {
+    const raw = student.scores ? student.scores[unit] : undefined;
+    const hasScore = raw !== undefined && raw !== null && raw !== '';
+    const score = hasScore ? Number(raw) : null;
+    if(hasScore && !isNaN(score)){ sum += score; count++; }
+
+    const tr = document.createElement('tr');
+    const statusHtml = !hasScore
+      ? '<span style="color:var(--ink-dim);font-size:12.5px;">—</span>'
+      : (score >= PASS_THRESHOLD
+          ? '<span class="stamp">O\'TDI</span>'
+          : '<span class="stamp fail">QAYTA</span>');
+    tr.innerHTML = `<td>${escapeHtml(unit)}</td><td class="score-cell">${hasScore ? score : '—'}</td><td>${statusHtml}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  card.appendChild(table);
+
+  const avgRow = document.createElement('div');
+  avgRow.className = 'avg-row';
+  const avg = count > 0 ? (sum / count).toFixed(1) : '—';
+  avgRow.innerHTML = `<span>O'rtacha ball</span><b>${avg}</b>`;
+  card.appendChild(avgRow);
+
+  return card;
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+searchBtn.addEventListener('click', runSearch);
+searchInput.addEventListener('keydown', e => { if(e.key === 'Enter') runSearch(); });
+
+/* ---------------- admin: lock / login (Firebase Auth) ---------------- */
+const lockTitle = document.getElementById('lockTitle');
+const lockSub = document.getElementById('lockSub');
+const lockHint = document.getElementById('lockHint');
+const adminEmailInput = document.getElementById('adminEmailInput');
+const adminPwInput = document.getElementById('adminPwInput');
+const adminPwBtn = document.getElementById('adminPwBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
+function initAdminLock(){
+  if(firebaseNotConfigured){
+    lockTitle.textContent = "Firebase sozlanmagan";
+    lockSub.textContent = "Fayl ichidagi firebaseConfig qismini to'ldiring (yuqoridagi izohga qarang).";
+    adminEmailInput.style.display = 'none';
+    adminPwInput.style.display = 'none';
+    adminPwBtn.style.display = 'none';
+    return;
+  }
+  if(isAdminLoggedIn){
+    showAdminPanel();
+    return;
+  }
+  adminLockView.style.display = 'block';
+  adminPanelView.style.display = 'none';
+  lockTitle.textContent = "Admin panel";
+  lockSub.textContent = "Kirish uchun email va parolni kiriting.";
+  lockHint.textContent = '';
+  adminPwInput.value = '';
+}
+
+adminPwBtn.addEventListener('click', handleAdminLogin);
+adminPwInput.addEventListener('keydown', e => { if(e.key === 'Enter') handleAdminLogin(); });
+adminEmailInput.addEventListener('keydown', e => { if(e.key === 'Enter') handleAdminLogin(); });
+
+async function handleAdminLogin(){
+  const email = adminEmailInput.value.trim();
+  const pw = adminPwInput.value;
+  if(!email || !pw){
+    lockHint.textContent = "Email va parolni kiriting.";
+    return;
+  }
+  adminPwBtn.disabled = true;
+  lockHint.textContent = 'Tekshirilmoqda…';
+  try{
+    await auth.signInWithEmailAndPassword(email, pw);
+    // holat o'zgarishi onAuthStateChanged orqali ushlanadi
+  }catch(e){
+    lockHint.textContent = "Email yoki parol noto'g'ri.";
+  }
+  adminPwBtn.disabled = false;
+}
+
+logoutBtn.addEventListener('click', async () => {
+  if(auth) await auth.signOut();
+});
+
+if(auth){
+  auth.onAuthStateChanged(user => {
+    isAdminLoggedIn = !!user;
+    // Faqat Admin bo'limi ochiq bo'lganda ko'rinishni yangilaymiz
+    if(adminStage.style.display !== 'none'){
+      initAdminLock();
+    }
+  });
+}
+
+async function showAdminPanel(){
+  adminLockView.style.display = 'none';
+  adminPanelView.style.display = 'block';
+  if(!dataLoaded) await loadData();
+  renderUnitChips();
+  renderAdminGradeTable();
+  loadVisitStats();
+}
+
+/* ---------------- admin: units ---------------- */
+const unitInput = document.getElementById('unitInput');
+const addUnitBtn = document.getElementById('addUnitBtn');
+const unitChips = document.getElementById('unitChips');
+
+addUnitBtn.addEventListener('click', async () => {
+  const name = unitInput.value.trim();
+  if(!name) return;
+  if(data.units.includes(name)){ unitInput.value=''; return; }
+  data.units.push(name);
+  unitInput.value = '';
+  renderUnitChips();
+  renderAdminGradeTable();
+  await saveData();
+});
+
+function renderUnitChips(){
+  unitChips.innerHTML = '';
+  data.units.forEach(unit => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `<span>${escapeHtml(unit)}</span>`;
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.title = "O'chirish";
+    del.addEventListener('click', async () => {
+      if(!confirm(`"${unit}" unitini o'chirasizmi? Unga tegishli barcha ballar ham o'chadi.`)) return;
+      data.units = data.units.filter(u => u !== unit);
+      data.students.forEach(s => { if(s.scores) delete s.scores[unit]; });
+      renderUnitChips();
+      renderAdminGradeTable();
+      await saveData();
+    });
+    chip.appendChild(del);
+    unitChips.appendChild(chip);
+  });
+  if(data.units.length === 0){
+    unitChips.innerHTML = '<span class="hint">Hali unit qo\'shilmagan.</span>';
+  }
+}
+
+/* ---------------- admin: students (bulk add / single add) ---------------- */
+const bulkNamesInput = document.getElementById('bulkNamesInput');
+const bulkGroupInput = document.getElementById('bulkGroupInput');
+const bulkAddBtn = document.getElementById('bulkAddBtn');
+const bulkHint = document.getElementById('bulkHint');
+const addModeAll = document.getElementById('addModeAll');
+const addModeOne = document.getElementById('addModeOne');
+const addModeAllPanel = document.getElementById('addModeAllPanel');
+const addModeOnePanel = document.getElementById('addModeOnePanel');
+const oneNameInput = document.getElementById('oneNameInput');
+const oneGroupInput = document.getElementById('oneGroupInput');
+const oneAddBtn = document.getElementById('oneAddBtn');
+
+function updateAddMode(){
+  const isAll = addModeAll.checked;
+  addModeAllPanel.style.display = isAll ? 'block' : 'none';
+  addModeOnePanel.style.display = isAll ? 'none' : 'block';
+  bulkHint.textContent = '';
+}
+addModeAll.addEventListener('change', updateAddMode);
+addModeOne.addEventListener('change', updateAddMode);
+
+oneAddBtn.addEventListener('click', async () => {
+  const name = oneNameInput.value.trim();
+  const group = oneGroupInput.value.trim();
+  if(!name){
+    bulkHint.textContent = "Iltimos, ism-familiyani kiriting.";
+    return;
+  }
+  if(!group){
+    bulkHint.textContent = "Iltimos, guruh nomini kiriting.";
+    return;
+  }
+
+  oneAddBtn.disabled = true;
+  bulkHint.textContent = 'Qo\'shilmoqda…';
+
+  data.students.push({
+    id: 's' + Date.now() + '_' + Math.floor(Math.random()*1000),
+    name, group, scores: {}
+  });
+
+  oneNameInput.value = '';
+  oneGroupInput.value = '';
+  renderAdminGradeTable();
+  const ok = await saveData();
+  bulkHint.textContent = ok
+    ? `"${name}" "${group}" guruhiga qo'shildi.`
+    : "Saqlashda xatolik yuz berdi, qayta urinib ko'ring.";
+  oneAddBtn.disabled = false;
+  setTimeout(() => { bulkHint.textContent = ''; }, 4000);
+});
+
+bulkAddBtn.addEventListener('click', async () => {
+  const group = bulkGroupInput.value.trim();
+  const names = bulkNamesInput.value
+    .split('\n')
+    .map(n => n.trim())
+    .filter(n => n.length > 0);
+
+  if(!group){
+    bulkHint.textContent = "Iltimos, guruh nomini kiriting.";
+    return;
+  }
+  if(names.length === 0){
+    bulkHint.textContent = "Kamida bitta ism-familiya kiriting.";
+    return;
+  }
+
+  bulkAddBtn.disabled = true;
+  bulkHint.textContent = 'Qo\'shilmoqda…';
+
+  names.forEach((name, i) => {
+    data.students.push({
+      id: 's' + Date.now() + '_' + i + Math.floor(Math.random()*1000),
+      name, group, scores: {}
+    });
+  });
+
+  bulkNamesInput.value = '';
+  bulkGroupInput.value = '';
+  renderAdminGradeTable();
+  const ok = await saveData();
+  bulkHint.textContent = ok
+    ? `${names.length} ta talaba "${group}" guruhiga qo'shildi.`
+    : "Saqlashda xatolik yuz berdi, qayta urinib ko'ring.";
+  bulkAddBtn.disabled = false;
+  setTimeout(() => { bulkHint.textContent = ''; }, 4000);
+});
+
+/* ---------------- admin: grade table ---------------- */
+const groupFoldersList = document.getElementById('groupFoldersList');
+const groupTableWrap = document.getElementById('groupTableWrap');
+const groupTableTitle = document.getElementById('groupTableTitle');
+const backToGroupsBtn = document.getElementById('backToGroupsBtn');
+const gradeSectionSub = document.getElementById('gradeSectionSub');
+const adminGradesTable = document.getElementById('adminGradesTable');
+const saveBtn = document.getElementById('saveBtn');
+const saveStatus = document.getElementById('saveStatus');
+
+let selectedGroup = null;
+
+function getGroupList(){
+  const seen = [];
+  data.students.forEach(s => { if(!seen.includes(s.group)) seen.push(s.group); });
+  return seen.map(g => ({
+    name: g,
+    count: data.students.filter(s => s.group === g).length
+  }));
+}
+
+function renderAdminGradeTable(){
+  const groups = getGroupList();
+
+  // agar tanlangan guruh endi mavjud bo'lmasa (o'chirilgan bo'lsa), ro'yxatga qaytamiz
+  if(selectedGroup && !groups.find(g => g.name === selectedGroup)){
+    selectedGroup = null;
+  }
+
+  renderGroupFolders(groups);
+
+  if(selectedGroup){
+    groupTableWrap.style.display = 'block';
+    groupTableTitle.textContent = selectedGroup;
+    gradeSectionSub.textContent = "Har bir katakka ballni yozing (0–100), so'ng saqlang.";
+    renderGroupTable(selectedGroup);
+  } else {
+    groupTableWrap.style.display = 'none';
+    gradeSectionSub.textContent = "Guruhni tanlang, so'ng har bir katakka ballni yozing (0–100).";
+  }
+}
+
+function renderGroupFolders(groups){
+  if(groups.length === 0){
+    groupFoldersList.innerHTML = '<span class="hint">Hali talaba qo\'shilmagan.</span>';
+    return;
+  }
+  groupFoldersList.innerHTML = '';
+  groups.forEach(g => {
+    const folder = document.createElement('button');
+    folder.className = 'group-folder';
+    folder.type = 'button';
+    folder.innerHTML = `<span class="folder-icon">📁</span><span class="folder-name">${escapeHtml(g.name)}</span><span class="folder-count">${g.count} talaba</span>`;
+    folder.addEventListener('click', () => {
+      selectedGroup = g.name;
+      renderAdminGradeTable();
+      groupTableWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    groupFoldersList.appendChild(folder);
+  });
+}
+
+backToGroupsBtn.addEventListener('click', () => {
+  selectedGroup = null;
+  renderAdminGradeTable();
+});
+
+function renderGroupTable(group){
+  const students = data.students.filter(s => s.group === group);
+
+  if(students.length === 0){
+    adminGradesTable.innerHTML = '<tr><td style="border:none;padding:16px;color:var(--ink-dim);">Bu guruhda talaba yo\'q.</td></tr>';
+    return;
+  }
+
+  let thead = '<tr><th>Ism</th>';
+  data.units.forEach(u => { thead += `<th>${escapeHtml(u)}</th>`; });
+  thead += '<th></th></tr>';
+
+  let tbody = '';
+  students.forEach(s => {
+    tbody += `<tr><td class="name-cell">${escapeHtml(s.name)}</td>`;
+    data.units.forEach(u => {
+      const val = (s.scores && s.scores[u] !== undefined) ? s.scores[u] : '';
+      tbody += `<td><input type="number" min="0" max="100" data-student="${s.id}" data-unit="${escapeHtml(u)}" value="${val}"></td>`;
+    });
+    tbody += `<td><button class="danger" data-del-student="${s.id}">O'chirish</button></td></tr>`;
+  });
+
+  adminGradesTable.innerHTML = '<thead>' + thead + '</thead><tbody>' + tbody + '</tbody>';
+
+  adminGradesTable.querySelectorAll('input[type="number"]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const sid = inp.dataset.student;
+      const unit = inp.dataset.unit;
+      const student = data.students.find(x => x.id === sid);
+      if(!student) return;
+      if(!student.scores) student.scores = {};
+      if(inp.value === ''){ delete student.scores[unit]; }
+      else { student.scores[unit] = Math.max(0, Math.min(100, Number(inp.value))); }
+    });
+  });
+
+  adminGradesTable.querySelectorAll('[data-del-student]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const sid = btn.dataset.delStudent;
+      const student = data.students.find(x => x.id === sid);
+      if(!student) return;
+      if(!confirm(`${student.name} o'chirilsinmi?`)) return;
+      data.students = data.students.filter(x => x.id !== sid);
+      renderAdminGradeTable();
+      await saveData();
+    });
+  });
+}
+
+saveBtn.addEventListener('click', async () => {
+  saveBtn.disabled = true;
+  saveStatus.textContent = 'Saqlanmoqda…';
+  const ok = await saveData();
+  saveStatus.textContent = ok ? "Saqlandi ✓" : "Xatolik yuz berdi, qayta urinib ko'ring.";
+  saveBtn.disabled = false;
+  setTimeout(() => { saveStatus.textContent = ''; }, 2500);
+});
+
+/* ---------------- init ---------------- */
+if(firebaseNotConfigured){
+  document.getElementById('setupNotice').style.display = 'block';
+}
+loadData().then(renderLeaderboard);
+trackVisit();
+</script>
+</body>
+</html>
