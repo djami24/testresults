@@ -406,6 +406,51 @@
   }
   .chip button{ background:none; border:none; color: var(--fail); cursor:pointer; font-size:13px; padding: 2px 4px; }
 
+  .group-folders{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .group-folder{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+    cursor:pointer;
+    text-align:left;
+    transition: all 0.15s ease;
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+  .group-folder:hover{ border-color: var(--brass); transform: translateY(-2px); }
+  .group-folder .folder-icon{ font-size: 20px; }
+  .group-folder .folder-name{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 15px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+  .group-folder .folder-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+  }
+  .group-table-header{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+  .group-table-title{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 16px;
+    color: var(--brass);
+  }
+
   .grade-table-wrap{ overflow-x:auto; margin-top: 14px; }
   table.admin-grades{ border-collapse: collapse; width: 100%; min-width: 480px; }
   table.admin-grades th, table.admin-grades td{
@@ -565,10 +610,18 @@
 
       <div class="admin-section">
         <h2 class="section-title">Natijalarni kiritish</h2>
-        <p class="section-sub">Har bir katakka ballni yozing (0–100), so'ng saqlang.</p>
-        <div class="grade-table-wrap">
+        <p class="section-sub" id="gradeSectionSub">Guruhni tanlang, so'ng har bir katakka ballni yozing (0–100).</p>
+
+        <div class="group-folders" id="groupFoldersList"></div>
+
+        <div class="grade-table-wrap" id="groupTableWrap" style="display:none;">
+          <div class="group-table-header">
+            <button class="ghost" id="backToGroupsBtn">← Guruhlar</button>
+            <span class="group-table-title" id="groupTableTitle"></span>
+          </div>
           <table class="admin-grades" id="adminGradesTable"></table>
         </div>
+
         <div class="save-bar">
           <button class="primary" id="saveBtn">Saqlash</button>
           <span class="save-status" id="saveStatus"></span>
@@ -1015,23 +1068,87 @@ bulkAddBtn.addEventListener('click', async () => {
 });
 
 /* ---------------- admin: grade table ---------------- */
+const groupFoldersList = document.getElementById('groupFoldersList');
+const groupTableWrap = document.getElementById('groupTableWrap');
+const groupTableTitle = document.getElementById('groupTableTitle');
+const backToGroupsBtn = document.getElementById('backToGroupsBtn');
+const gradeSectionSub = document.getElementById('gradeSectionSub');
 const adminGradesTable = document.getElementById('adminGradesTable');
 const saveBtn = document.getElementById('saveBtn');
 const saveStatus = document.getElementById('saveStatus');
 
+let selectedGroup = null;
+
+function getGroupList(){
+  const seen = [];
+  data.students.forEach(s => { if(!seen.includes(s.group)) seen.push(s.group); });
+  return seen.map(g => ({
+    name: g,
+    count: data.students.filter(s => s.group === g).length
+  }));
+}
+
 function renderAdminGradeTable(){
-  if(data.students.length === 0){
-    adminGradesTable.innerHTML = '<tr><td style="border:none;padding:16px;color:var(--ink-dim);">Hali talaba qo\'shilmagan.</td></tr>';
+  const groups = getGroupList();
+
+  // agar tanlangan guruh endi mavjud bo'lmasa (o'chirilgan bo'lsa), ro'yxatga qaytamiz
+  if(selectedGroup && !groups.find(g => g.name === selectedGroup)){
+    selectedGroup = null;
+  }
+
+  renderGroupFolders(groups);
+
+  if(selectedGroup){
+    groupTableWrap.style.display = 'block';
+    groupTableTitle.textContent = selectedGroup;
+    gradeSectionSub.textContent = "Har bir katakka ballni yozing (0–100), so'ng saqlang.";
+    renderGroupTable(selectedGroup);
+  } else {
+    groupTableWrap.style.display = 'none';
+    gradeSectionSub.textContent = "Guruhni tanlang, so'ng har bir katakka ballni yozing (0–100).";
+  }
+}
+
+function renderGroupFolders(groups){
+  if(groups.length === 0){
+    groupFoldersList.innerHTML = '<span class="hint">Hali talaba qo\'shilmagan.</span>';
+    return;
+  }
+  groupFoldersList.innerHTML = '';
+  groups.forEach(g => {
+    const folder = document.createElement('button');
+    folder.className = 'group-folder';
+    folder.type = 'button';
+    folder.innerHTML = `<span class="folder-icon">📁</span><span class="folder-name">${escapeHtml(g.name)}</span><span class="folder-count">${g.count} talaba</span>`;
+    folder.addEventListener('click', () => {
+      selectedGroup = g.name;
+      renderAdminGradeTable();
+      groupTableWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    groupFoldersList.appendChild(folder);
+  });
+}
+
+backToGroupsBtn.addEventListener('click', () => {
+  selectedGroup = null;
+  renderAdminGradeTable();
+});
+
+function renderGroupTable(group){
+  const students = data.students.filter(s => s.group === group);
+
+  if(students.length === 0){
+    adminGradesTable.innerHTML = '<tr><td style="border:none;padding:16px;color:var(--ink-dim);">Bu guruhda talaba yo\'q.</td></tr>';
     return;
   }
 
-  let thead = '<tr><th>Ism</th><th>Guruh</th>';
+  let thead = '<tr><th>Ism</th>';
   data.units.forEach(u => { thead += `<th>${escapeHtml(u)}</th>`; });
   thead += '<th></th></tr>';
 
   let tbody = '';
-  data.students.forEach(s => {
-    tbody += `<tr><td class="name-cell">${escapeHtml(s.name)}</td><td class="group-cell">${escapeHtml(s.group)}</td>`;
+  students.forEach(s => {
+    tbody += `<tr><td class="name-cell">${escapeHtml(s.name)}</td>`;
     data.units.forEach(u => {
       const val = (s.scores && s.scores[u] !== undefined) ? s.scores[u] : '';
       tbody += `<td><input type="number" min="0" max="100" data-student="${s.id}" data-unit="${escapeHtml(u)}" value="${val}"></td>`;
