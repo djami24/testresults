@@ -1,14 +1,15 @@
-# testresults
 <!DOCTYPE html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
 <title>Natijalar daftari</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
+    color-scheme: dark;
     --bg: #121826;
     --bg-2: #0d121c;
     --panel: #1c2536;
@@ -201,6 +202,7 @@
   table.grades{
     width:100%;
     border-collapse: collapse;
+    background: transparent;
   }
   table.grades th{
     text-align:left;
@@ -211,11 +213,14 @@
     color: var(--ink-dim);
     padding: 6px 8px;
     border-bottom: 1px solid var(--line);
+    background: transparent;
   }
   table.grades td{
     padding: 10px 8px;
     font-size: 14px;
     border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
   }
   table.grades tr:last-child td{ border-bottom:none; }
   td.score-cell{ font-family:'IBM Plex Mono', monospace; font-weight:600; }
@@ -300,6 +305,8 @@
     padding: 8px;
     font-size: 13px;
     text-align:center;
+    background: var(--panel);
+    color: var(--ink);
   }
   table.admin-grades th{
     font-family:'IBM Plex Mono', monospace;
