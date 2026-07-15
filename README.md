@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="dark light">
 <title>EDU SCHOOL — Natijalar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Sans+Caption:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme: dark;
@@ -45,7 +45,7 @@
   body{
     background: radial-gradient(ellipse at top, var(--bg-grad-1) 0%, var(--bg) 55%, var(--bg-2) 100%);
     color: var(--ink);
-    font-family: 'Inter', sans-serif;
+    font-family: 'PT Serif', Georgia, serif;
     min-height:100vh;
     transition: background 0.3s ease, color 0.3s ease;
   }
@@ -115,7 +115,7 @@
     margin-bottom: 8px;
   }
   .brand h1{
-    font-family:'Fraunces', serif;
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
     font-weight: 600;
     font-size: clamp(26px, 5vw, 38px);
     margin: 0;
@@ -134,7 +134,7 @@
   }
 
   h2.section-title{
-    font-family:'Fraunces', serif;
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
     font-weight: 600;
     font-size: 19px;
     margin: 0 0 4px;
@@ -156,7 +156,7 @@
     border: 1px solid var(--line);
     border-radius: 8px;
     color: var(--ink);
-    font-family: 'Inter', sans-serif;
+    font-family: 'PT Serif', Georgia, serif;
     font-size: 15px;
     padding: 12px 14px;
     outline: none;
@@ -231,7 +231,7 @@
     border-bottom: 1px dashed var(--line);
   }
   .result-head .name{
-    font-family:'Fraunces', serif;
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
     font-weight:600;
     font-size: 20px;
   }
@@ -333,7 +333,7 @@
     border: 1px solid var(--line);
     border-radius: 8px;
     color: var(--ink);
-    font-family: 'Inter', sans-serif;
+    font-family: 'PT Serif', Georgia, serif;
     font-size: 14px;
     padding: 12px 14px;
     outline: none;
@@ -344,6 +344,53 @@
   }
   .bulk-textarea:focus{ border-color: var(--brass-dim); }
   .bulk-textarea::placeholder{ color: #5c6a80; }
+
+  .stats-row{
+    display:flex; gap: 12px; flex-wrap:wrap; align-items:stretch;
+  }
+  .stats-box{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display:flex; flex-direction:column; gap: 4px;
+    min-width: 140px;
+  }
+  .stats-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-dim);
+  }
+  .stats-value{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 24px;
+    color: var(--brass);
+  }
+  .stats-value-sm{ font-size: 13px; font-family:'IBM Plex Mono', monospace; color: var(--ink); }
+
+  .mode-switch{
+    display:flex; gap: 10px; margin-bottom: 4px; flex-wrap:wrap;
+  }
+  .mode-option{
+    display:flex; align-items:center; gap: 7px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 16px 8px 12px;
+    cursor:pointer;
+    font-size: 13px;
+    color: var(--ink-dim);
+    transition: all 0.2s ease;
+  }
+  .mode-option input{ accent-color: var(--brass); cursor:pointer; }
+  .mode-option:has(input:checked){
+    border-color: var(--brass);
+    color: var(--ink);
+    background: rgba(201,162,39,0.1);
+  }
 
   .chip-list{
     display:flex; flex-wrap:wrap; gap: 8px; margin-top: 14px;
@@ -456,6 +503,22 @@
       </div>
 
       <div class="admin-section">
+        <h2 class="section-title">Sayt statistikasi</h2>
+        <p class="section-sub">Saytga jami nechta kishi kirganini ko'rsatadi.</p>
+        <div class="stats-row">
+          <div class="stats-box">
+            <span class="stats-label">Jami tashriflar</span>
+            <span class="stats-value" id="visitCountValue">—</span>
+          </div>
+          <div class="stats-box">
+            <span class="stats-label">Oxirgi tashrif</span>
+            <span class="stats-value stats-value-sm" id="lastVisitValue">—</span>
+          </div>
+          <button class="ghost" id="refreshVisitsBtn" style="align-self:center;">Yangilash</button>
+        </div>
+      </div>
+
+      <div class="admin-section">
         <h2 class="section-title">Unitlar</h2>
         <p class="section-sub">Har bir ustun bitta unit natijasini bildiradi.</p>
         <div class="inline-form">
@@ -467,12 +530,36 @@
 
       <div class="admin-section">
         <h2 class="section-title">Talaba qo'shish</h2>
-        <p class="section-sub">Har bir talabani alohida qatorga yozing (ism familiya), pastda guruhni bir marta kiriting — hammasi o'sha guruhga qo'shiladi.</p>
-        <textarea id="bulkNamesInput" class="bulk-textarea" rows="6" placeholder="Malika Karimova&#10;Aziz Yusupov&#10;Sardor Rahimov&#10;..."></textarea>
-        <div class="inline-form" style="margin-top:12px;">
-          <input type="text" id="bulkGroupInput" placeholder="Guruh nomi (barchasiga)">
-          <button class="primary" id="bulkAddBtn">Hammasini qo'shish</button>
+        <p class="section-sub">Guruhni qanday qo'shishni tanlang: ro'yxatdagi hammasiga bitta guruh, yoki faqat bitta ismga.</p>
+        <div class="mode-switch" id="addModeSwitch">
+          <label class="mode-option">
+            <input type="radio" name="addMode" id="addModeAll" value="all" checked>
+            <span>Hammasiga qo'shish</span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="addMode" id="addModeOne" value="one">
+            <span>Bitta ismga qo'shish</span>
+          </label>
         </div>
+
+        <div id="addModeAllPanel">
+          <p class="section-sub" style="margin-top:10px;">Har bir talabani alohida qatorga yozing (ism familiya), pastda guruhni bir marta kiriting — hammasi o'sha guruhga qo'shiladi.</p>
+          <textarea id="bulkNamesInput" class="bulk-textarea" rows="6" placeholder="Malika Karimova&#10;Aziz Yusupov&#10;Sardor Rahimov&#10;..."></textarea>
+          <div class="inline-form" style="margin-top:12px;">
+            <input type="text" id="bulkGroupInput" placeholder="Guruh nomi (barchasiga)">
+            <button class="primary" id="bulkAddBtn">Hammasini qo'shish</button>
+          </div>
+        </div>
+
+        <div id="addModeOnePanel" style="display:none;">
+          <p class="section-sub" style="margin-top:10px;">Faqat bitta talabaning ism-familiyasi va guruhini kiriting.</p>
+          <div class="inline-form">
+            <input type="text" id="oneNameInput" placeholder="Ism familiya">
+            <input type="text" id="oneGroupInput" placeholder="Guruh nomi">
+            <button class="primary" id="oneAddBtn">Qo'shish</button>
+          </div>
+        </div>
+
         <div class="hint" id="bulkHint"></div>
       </div>
 
@@ -577,6 +664,48 @@ async function saveData(){
     return false;
   }
 }
+
+/* ---------------- visitor tracking ---------------- */
+async function trackVisit(){
+  if(firebaseNotConfigured) return;
+  try{
+    if(sessionStorage.getItem('eduSchoolVisitTracked')) return;
+    sessionStorage.setItem('eduSchoolVisitTracked', '1');
+    await db.collection('stats').doc('visits').set({
+      count: firebase.firestore.FieldValue.increment(1),
+      lastVisit: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }catch(e){ /* jimgina o'tkazib yuboramiz */ }
+}
+
+const visitCountValue = document.getElementById('visitCountValue');
+const lastVisitValue = document.getElementById('lastVisitValue');
+const refreshVisitsBtn = document.getElementById('refreshVisitsBtn');
+
+async function loadVisitStats(){
+  if(firebaseNotConfigured) return;
+  visitCountValue.textContent = '…';
+  lastVisitValue.textContent = '…';
+  try{
+    const snap = await db.collection('stats').doc('visits').get();
+    if(snap.exists){
+      const d = snap.data();
+      visitCountValue.textContent = (d.count !== undefined) ? d.count : '0';
+      if(d.lastVisit && d.lastVisit.toDate){
+        lastVisitValue.textContent = d.lastVisit.toDate().toLocaleString('uz-UZ');
+      } else {
+        lastVisitValue.textContent = '—';
+      }
+    } else {
+      visitCountValue.textContent = '0';
+      lastVisitValue.textContent = '—';
+    }
+  }catch(e){
+    visitCountValue.textContent = 'Xato';
+    lastVisitValue.textContent = '—';
+  }
+}
+refreshVisitsBtn.addEventListener('click', loadVisitStats);
 
 /* ---------------- navigation: student view <-> admin view ---------------- */
 cornerAdminBtn.addEventListener('click', () => {
@@ -751,6 +880,7 @@ async function showAdminPanel(){
   if(!dataLoaded) await loadData();
   renderUnitChips();
   renderAdminGradeTable();
+  loadVisitStats();
 }
 
 /* ---------------- admin: units ---------------- */
@@ -794,11 +924,58 @@ function renderUnitChips(){
   }
 }
 
-/* ---------------- admin: students (bulk add) ---------------- */
+/* ---------------- admin: students (bulk add / single add) ---------------- */
 const bulkNamesInput = document.getElementById('bulkNamesInput');
 const bulkGroupInput = document.getElementById('bulkGroupInput');
 const bulkAddBtn = document.getElementById('bulkAddBtn');
 const bulkHint = document.getElementById('bulkHint');
+const addModeAll = document.getElementById('addModeAll');
+const addModeOne = document.getElementById('addModeOne');
+const addModeAllPanel = document.getElementById('addModeAllPanel');
+const addModeOnePanel = document.getElementById('addModeOnePanel');
+const oneNameInput = document.getElementById('oneNameInput');
+const oneGroupInput = document.getElementById('oneGroupInput');
+const oneAddBtn = document.getElementById('oneAddBtn');
+
+function updateAddMode(){
+  const isAll = addModeAll.checked;
+  addModeAllPanel.style.display = isAll ? 'block' : 'none';
+  addModeOnePanel.style.display = isAll ? 'none' : 'block';
+  bulkHint.textContent = '';
+}
+addModeAll.addEventListener('change', updateAddMode);
+addModeOne.addEventListener('change', updateAddMode);
+
+oneAddBtn.addEventListener('click', async () => {
+  const name = oneNameInput.value.trim();
+  const group = oneGroupInput.value.trim();
+  if(!name){
+    bulkHint.textContent = "Iltimos, ism-familiyani kiriting.";
+    return;
+  }
+  if(!group){
+    bulkHint.textContent = "Iltimos, guruh nomini kiriting.";
+    return;
+  }
+
+  oneAddBtn.disabled = true;
+  bulkHint.textContent = 'Qo\'shilmoqda…';
+
+  data.students.push({
+    id: 's' + Date.now() + '_' + Math.floor(Math.random()*1000),
+    name, group, scores: {}
+  });
+
+  oneNameInput.value = '';
+  oneGroupInput.value = '';
+  renderAdminGradeTable();
+  const ok = await saveData();
+  bulkHint.textContent = ok
+    ? `"${name}" "${group}" guruhiga qo'shildi.`
+    : "Saqlashda xatolik yuz berdi, qayta urinib ko'ring.";
+  oneAddBtn.disabled = false;
+  setTimeout(() => { bulkHint.textContent = ''; }, 4000);
+});
 
 bulkAddBtn.addEventListener('click', async () => {
   const group = bulkGroupInput.value.trim();
@@ -903,6 +1080,7 @@ if(firebaseNotConfigured){
   document.getElementById('setupNotice').style.display = 'block';
 }
 loadData();
+trackVisit();
 </script>
 </body>
 </html>
