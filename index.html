@@ -406,6 +406,54 @@
   }
   .chip button{ background:none; border:none; color: var(--fail); cursor:pointer; font-size:13px; padding: 2px 4px; }
 
+  .leaderboard-list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .leaderboard-row{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .leaderboard-rank{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size: 14px;
+    color: var(--ink-dim);
+    width: 26px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .leaderboard-row.top1 .leaderboard-rank{ color: #d4af37; font-size:18px; }
+  .leaderboard-row.top2 .leaderboard-rank{ color: #b7b7b7; font-size:17px; }
+  .leaderboard-row.top3 .leaderboard-rank{ color: #c98a4b; font-size:17px; }
+  .leaderboard-info{ flex:1; min-width:0; }
+  .leaderboard-name{
+    font-family:'PT Sans Caption', 'PT Sans', Arial, sans-serif;
+    font-weight:700;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .leaderboard-group{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--brass);
+    margin-top: 2px;
+  }
+  .leaderboard-score{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size: 16px;
+    color: var(--pass);
+    flex-shrink:0;
+  }
+
   .group-folders{
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -523,6 +571,13 @@
     </div>
     <div class="hint" id="studentHint"></div>
     <div id="resultsArea"></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="stage" id="leaderboardStage" style="display:none; margin-top:22px;">
+    <h2 class="section-title">🏆 TOP-10</h2>
+    <p class="section-sub" id="leaderboardSub"></p>
+    <div id="leaderboardArea"></div>
   </div>
 
   <!-- ADMIN VIEW -->
@@ -685,7 +740,7 @@ function applyTheme(isLight){
   themeIcon.textContent = isLight ? '☀️' : '🌙';
   themeLabel.textContent = isLight ? 'Kunduzgi rejim' : 'Tungi rejim';
 }
-applyTheme(false);
+applyTheme(true);
 themeToggle.addEventListener('click', () => {
   applyTheme(!document.body.classList.contains('light-mode'));
 });
@@ -705,6 +760,55 @@ async function loadData(){
   dataLoaded = true;
 }
 
+/* ---------------- top-10 leaderboard (so'nggi unit, faqat 100 ball) ---------------- */
+const leaderboardStage = document.getElementById('leaderboardStage');
+const leaderboardSub = document.getElementById('leaderboardSub');
+const leaderboardArea = document.getElementById('leaderboardArea');
+
+function renderLeaderboard(){
+  if(!data.units || data.units.length === 0 || !data.students || data.students.length === 0){
+    leaderboardStage.style.display = 'none';
+    return;
+  }
+
+  const lastUnit = data.units[data.units.length - 1];
+  const perfect = data.students.filter(s =>
+    s.scores && Number(s.scores[lastUnit]) === 100
+  );
+
+  if(perfect.length === 0){
+    leaderboardStage.style.display = 'none';
+    return;
+  }
+
+  const top10 = perfect.slice(0, 10);
+
+  leaderboardStage.style.display = 'block';
+  leaderboardSub.textContent = `"${lastUnit}" unitidan 100 ball olgan talabalar`;
+
+  leaderboardArea.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'leaderboard-list';
+
+  top10.forEach((s, i) => {
+    const rank = i + 1;
+    const row = document.createElement('div');
+    row.className = 'leaderboard-row' + (rank <= 3 ? ' top' + rank : '');
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+    row.innerHTML = `
+      <span class="leaderboard-rank">${medal}</span>
+      <span class="leaderboard-info">
+        <div class="leaderboard-name">${escapeHtml(s.name)}</div>
+        <div class="leaderboard-group">${escapeHtml(s.group)}</div>
+      </span>
+      <span class="leaderboard-score">100</span>
+    `;
+    list.appendChild(row);
+  });
+
+  leaderboardArea.appendChild(list);
+}
+
 async function saveData(){
   if(firebaseNotConfigured) return false;
   try{
@@ -712,6 +816,7 @@ async function saveData(){
       units: data.units,
       students: data.students
     });
+    renderLeaderboard();
     return true;
   }catch(e){
     return false;
@@ -1196,7 +1301,7 @@ saveBtn.addEventListener('click', async () => {
 if(firebaseNotConfigured){
   document.getElementById('setupNotice').style.display = 'block';
 }
-loadData();
+loadData().then(renderLeaderboard);
 trackVisit();
 </script>
 </body>
